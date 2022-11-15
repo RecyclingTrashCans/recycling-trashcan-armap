@@ -132,7 +132,7 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
       val cameraPositionBuilder: CameraPosition.Builder = if (!setInitialCameraPosition) {
         // Set the camera position with an initial default zoom level.
         setInitialCameraPosition = true
-        CameraPosition.Builder().zoom(21f).target(position)
+        CameraPosition.Builder().zoom(19f).target(position)
       } else {
         // Set the camera position and keep the same zoom level.
         CameraPosition.Builder()
