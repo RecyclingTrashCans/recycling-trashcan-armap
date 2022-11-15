@@ -28,4 +28,6 @@
   <string name="no_ar_support">This device does not support AR</string>
   <string name="camera_not_available">Camera not available. Try restarting the app.</string>
   <string name="ar_core_exception">Failed to create AR session: %1$s</string>
+  <string name="navigate">Navigate</string>
+  <string name="three_sixty">360°</string>
 </resources>

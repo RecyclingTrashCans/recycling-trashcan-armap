@@ -25,7 +25,7 @@
       android:layout_height="fill_parent"
       android:layout_gravity="top" />
 
-  <dev.csaba.armap.recyclingtrashcans.helpers.MapTouchWrapper
+  <dev.csaba.armap.recyclingtrashcans.helpers.MapWrapper
       android:id="@+id/map_wrapper"
       android:layout_width="match_parent"
       android:layout_height="300dp"
@@ -46,6 +46,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/statusText"
         />
-  </dev.csaba.armap.recyclingtrashcans.helpers.MapTouchWrapper>
+  </dev.csaba.armap.recyclingtrashcans.helpers.MapWrapper>
 
 </RelativeLayout>

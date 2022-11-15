@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:background="#AAFFFFFF"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal">-->
+        <TextView
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/infoTitle"
+            />
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:layout_marginStart="-24dp"-->
+<!--            style="@style/Widget.MaterialComponents.Button.Icon"-->
+<!--            android:id="@+id/info_close_button"-->
+<!--            app:icon="@drawable/ic_close_black_24dp"-->
+<!--            app:iconSize="24dp"-->
+<!--            app:iconPadding="0dp"-->
+<!--            android:insetLeft="-12dp"-->
+<!--            android:insetTop="0dp"-->
+<!--            android:insetRight="0dp"-->
+<!--            android:insetBottom="0dp"-->
+<!--            />-->
+<!--    </LinearLayout>-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:id="@+id/navigate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:minWidth="48dp"
+            android:text="@string/navigate"
+            android:enabled="true"
+            app:icon="@drawable/ic_navigate_24dp"
+            app:iconGravity="start"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:id="@+id/web_page_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="48dp"
+            android:text="@string/three_sixty"
+            android:enabled="true"
+            app:icon="@drawable/ic_cardboard_black_24dp"
+            app:iconGravity="start"
+            />
+    </LinearLayout>
+</LinearLayout>

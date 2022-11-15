@@ -16,29 +16,27 @@
 package dev.csaba.armap.recyclingtrashcans.helpers
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.LightingColorFilter
-import android.graphics.Paint
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import dev.csaba.armap.recyclingtrashcans.TrashcanGeoActivity
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
+import com.google.android.gms.maps.model.*
+import com.google.android.material.button.MaterialButton
 import dev.csaba.armap.recyclingtrashcans.R
+import dev.csaba.armap.recyclingtrashcans.TrashcanGeoActivity
 
-class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMap): OnInfoWindowClickListener {
+
+class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMap) {
   companion object {
     const val TAG = "MapView"
   }
@@ -52,6 +50,13 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
 
   var earthMarkers: MutableList<Marker?> = emptyList<Marker?>().toMutableList()
 
+  private val infoWindow: ViewGroup
+  private val infoTitle: TextView
+  // private val closeButton: MaterialButton
+  private val navigateButton: MaterialButton
+  private val webPageButton: MaterialButton
+  private var selectedMarker: Marker? = null
+
   init {
     googleMap.uiSettings.apply {
       isMapToolbarEnabled = false
@@ -62,11 +67,54 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
     }
 
     googleMap.setOnMarkerClickListener { false }
-    googleMap.setOnInfoWindowClickListener(this)
+//    googleMap.setOnInfoWindowClickListener(this)
+//    googleMap.setOnInfoWindowCloseListener(this)
+    // googleMap.setOnMarkerClickListener(this)
 
     // Add listeners to keep track of when the GoogleMap camera is moving.
     googleMap.setOnCameraMoveListener { cameraIdle = false }
     googleMap.setOnCameraIdleListener { cameraIdle = true }
+
+    val mapWrapper = activity.findViewById(R.id.map_wrapper) as MapWrapper
+    // 39 - default marker height
+    // 20 - offset between the default InfoWindow bottom edge and it's content bottom edge
+    mapWrapper.init(googleMap, getPixelsFromDp(activity, (39 + 20).toFloat()))
+
+    infoWindow = View.inflate(activity, R.layout.info_window, null) as ViewGroup
+    infoTitle = infoWindow.findViewById(R.id.infoTitle) as TextView
+    // closeButton = infoWindow.findViewById(R.id.info_close_button) as MaterialButton
+    navigateButton = infoWindow.findViewById(R.id.navigate_button) as MaterialButton
+    navigateButton.setOnClickListener {
+      if (selectedMarker != null && selectedMarker?.title != "You") {
+        onMapsNavigationClickHandler(selectedMarker!!)
+      }
+    }
+    webPageButton = infoWindow.findViewById(R.id.web_page_button) as MaterialButton
+    webPageButton.setOnClickListener {
+      if (selectedMarker != null) {
+        onNavigateToWebPageClickHandler(selectedMarker!!)
+      }
+    }
+
+    googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
+      override fun getInfoWindow(marker: Marker): View? {
+        return null
+      }
+
+      override fun getInfoContents(marker: Marker): View {
+        // Setting up the infoWindow with current's marker info
+        infoTitle.text = marker.title
+
+        // We must call this to set the current marker and infoWindow references
+        // to the MapWrapperLayout
+        mapWrapper.setMarkerWithInfoWindow(marker, infoWindow)
+        selectedMarker = marker
+        val isYou = marker.title == "You"
+        navigateButton.isEnabled = !isYou
+        webPageButton.isEnabled = !isYou && marker.tag != null && (marker.tag as String).isNotEmpty()
+        return infoWindow
+      }
+    })
   }
 
   fun updateMapPosition(latitude: Double, longitude: Double, heading: Double) {
@@ -103,7 +151,6 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
     lat: Double = 0.0,
     lon: Double = 0.0,
     title: String = "",
-    snippet: String = "",
     url: String = "",
     visible: Boolean = false,
     iconId: Int = R.drawable.ic_navigation_white_48dp,
@@ -118,10 +165,6 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
 
     if (title.isNotEmpty()) {
       markerOptions.title(title)
-    }
-
-    if (snippet.isNotEmpty() && url.isNotEmpty()) {
-      markerOptions.snippet(snippet)
     }
 
     val marker = googleMap.addMarker(markerOptions)
@@ -140,23 +183,68 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
     return navigationIcon
   }
 
-  override fun onInfoWindowClick(marker: Marker) {
+  private fun onNavigateToWebPageClickHandler(marker: Marker) {
     val url: String = marker.tag as String? ?: return
     if (url.isEmpty()) {
       return
     }
 
     try {
-      val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+      val webPageIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
         // The URL should either launch directly in a non-browser app
         // (if it’s the default), or in the disambiguation dialog
         addCategory(Intent.CATEGORY_BROWSABLE)
         flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
           Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REQUIRE_DEFAULT else Intent.FLAG_ACTIVITY_NEW_TASK
       }
-      activity.startActivity(intent)
+      activity.startActivity(webPageIntent)
     } catch (e: ActivityNotFoundException) {
       Log.e(TAG, "Could not open URL", e)
     }
+  }
+
+//  override fun onInfoWindowClick(marker: Marker) {
+//    onNavigateToWebPageClickHandler(marker)
+//  }
+
+  private fun onMapsNavigationClickHandler(marker: Marker) {
+    try {
+      val mapsIntentUri = Uri.parse("google.navigation:q=${marker.position.latitude},${marker.position.longitude}&mode=w")
+      val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri).apply {
+        addCategory(Intent.CATEGORY_BROWSABLE)
+        flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+          Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REQUIRE_DEFAULT else Intent.FLAG_ACTIVITY_NEW_TASK
+      }
+      activity.startActivity(mapIntent)
+    } catch (e: ActivityNotFoundException) {
+      Log.e(TAG, "Could not navigate to location", e)
+    }
+  }
+
+  private fun moveMapSoMarkerOnTheBottom(marker: Marker) {
+    // https://stackoverflow.com/questions/16764002/how-to-center-the-camera-so-that-marker-is-at-the-bottom-of-screen-google-map
+    // https://stackoverflow.com/a/16764140/292502
+    val projection = googleMap.projection
+    val markerPosition = marker.position
+    val markerPoint = projection.toScreenLocation(markerPosition)
+    val targetPoint = Point(markerPoint.x, markerPoint.y - activity.view.root.height / 2)
+    val targetPosition = projection.fromScreenLocation(targetPoint)
+    googleMap.animateCamera(CameraUpdateFactory.newLatLng(targetPosition), 500, null)
+  }
+
+//  override fun onMarkerClick(marker: Marker): Boolean {
+//    if (selectedMarker == marker) {
+//      // TODO: close custom info window
+//    } else {
+//      selectedMarker = marker
+//      moveMapSoMarkerOnTheBottom(marker)
+//    }
+//
+//    return true
+//  }
+
+  private fun getPixelsFromDp(context: Context, dp: Float): Int {
+    val scale: Float = context.resources.displayMetrics.density
+    return (dp * scale + 0.5f).toInt()
   }
 }

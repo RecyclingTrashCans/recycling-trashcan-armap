@@ -236,11 +236,11 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
         heading = cameraGeospatialPose.heading
       )
 
-      if (BuildConfig.BUILD_TYPE.equals("debug")) {
-        activity.view.updateStatusText(earth, cameraGeospatialPose)
-      } else {
+//      if (BuildConfig.BUILD_TYPE.equals("debug")) {
+//        activity.view.updateStatusText(earth, cameraGeospatialPose)
+//      } else {
         activity.view.updateStatusTextString("")
-      }
+//      }
     } else if (!BuildConfig.BUILD_TYPE.equals("debug")) {
       activity.view.updateStatusTextString(activity.resources.getString(R.string.calculating))
     }
@@ -414,7 +414,6 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
     val shouldAddAnchors = earthAnchors.isEmpty()
     val mapView = activity.view.mapView
     val shouldAddMarker = mapView != null && mapView.earthMarkers.isEmpty()
-    val infoSnippet = if (shouldAddMarker) activity.resources.getString(R.string.info_snippet) else ""
     for (location in mapAreas[areaIndex].locationData) {
       if (shouldAddAnchors) {
         earthAnchors.add(earth.resolveAnchorOnTerrain(
@@ -427,7 +426,6 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
           location.gpsLocation.latitude,
           location.gpsLocation.longitude,
           location.title,
-          infoSnippet,
           location.url,
           true,
           R.drawable.ic_marker_white_48dp,
