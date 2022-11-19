@@ -57,6 +57,9 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
   private val webPageButton: MaterialButton
   private var selectedMarker: Marker? = null
 
+  private val threeSixty: String
+  private val urlTitle: String
+
   init {
     googleMap.uiSettings.apply {
       isMapToolbarEnabled = false
@@ -96,6 +99,9 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
       }
     }
 
+    threeSixty = activity.resources.getString(R.string.three_sixty)
+    urlTitle = activity.resources.getString(R.string.three_sixty)
+
     googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
       override fun getInfoWindow(marker: Marker): View? {
         return null
@@ -107,11 +113,13 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
 
         // We must call this to set the current marker and infoWindow references
         // to the MapWrapperLayout
-        mapWrapper.setMarkerWithInfoWindow(marker, infoWindow)
-        selectedMarker = marker
         val isYou = marker.title == "You"
         navigateButton.isEnabled = !isYou
-        webPageButton.isEnabled = !isYou && marker.tag != null && (marker.tag as String).isNotEmpty()
+        val pageUrl = if (marker.tag != null) marker.tag as String else ""
+        webPageButton.text = if (pageUrl.contains("vrview")) threeSixty else urlTitle
+        webPageButton.isEnabled = !isYou && pageUrl.isNotEmpty()
+        mapWrapper.setMarkerWithInfoWindow(marker, infoWindow)
+        selectedMarker = marker
         return infoWindow
       }
     })
