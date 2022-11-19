@@ -50,9 +50,11 @@
             android:layout_marginEnd="8dp"
             android:minWidth="48dp"
             android:text="@string/navigate"
-            android:enabled="true"
+            android:textColor="#000000"
             app:icon="@drawable/ic_navigate_24dp"
             app:iconGravity="start"
+            app:iconTint="#000000"
+            app:iconTintMode="multiply"
             />
 
         <com.google.android.material.button.MaterialButton
@@ -63,9 +65,11 @@
             android:layout_weight="1"
             android:minWidth="48dp"
             android:text="@string/three_sixty"
-            android:enabled="true"
+            android:textColor="#000000"
             app:icon="@drawable/ic_cardboard_black_24dp"
             app:iconGravity="start"
+            app:iconTint="#000000"
+            app:iconTintMode="multiply"
             />
     </LinearLayout>
 </LinearLayout>
