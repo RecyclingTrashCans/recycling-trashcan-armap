@@ -34,11 +34,23 @@ import dev.csaba.armap.common.samplerender.arcore.BackgroundRenderer
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.util.*
+import kotlin.Comparator
 import kotlin.math.*
+
+enum class LocationKind {
+  POI,
+  TRASHCAN;
+
+  companion object {
+    fun getByName(name: String) = valueOf(name.uppercase(Locale.getDefault()))
+  }
+}
 
 data class LocationData(
   val gpsLocation: LatLng,
   val title: String,
+  val kind: LocationKind,
   val url: String,
   val modelMatrix: FloatArray,
   val modelViewMatrix: FloatArray,
@@ -98,8 +110,10 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
   private var hasSetTextureNames = false
 
   // Virtual object (ARCore pawn)
-  private lateinit var virtualObjectMesh: Mesh
-  private lateinit var virtualObjectShader: Shader
+  private lateinit var downArrowMesh: Mesh
+  private lateinit var greenObjectShader: Shader
+  private lateinit var mapPinMesh: Mesh
+  private lateinit var redObjectShader: Shader
 
   // Temporary matrix allocated here to reduce number of allocations for each frame.
   private val viewMatrix = FloatArray(16)
@@ -136,12 +150,20 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
       virtualSceneFramebuffer = Framebuffer(render, 1, 1)
 
       // Virtual object to render (Geospatial Marker)
-      virtualObjectMesh = Mesh.createFromAsset(render, "models/down_arrow.obj")
-      virtualObjectShader =
+      downArrowMesh = Mesh.createFromAsset(render, "models/down_arrow.obj")
+      greenObjectShader =
         Shader.createFromAssets(
           render,
           "shaders/ar_unlit_object.vert",
-          "shaders/ar_unlit_object.frag",
+          "shaders/ar_unlit_green_object.frag",
+          null
+        )
+      mapPinMesh = Mesh.createFromAsset(render, "models/map_pin.obj")
+      redObjectShader =
+        Shader.createFromAssets(
+          render,
+          "shaders/ar_unlit_object.vert",
+          "shaders/ar_unlit_red_object.frag",
           null
         )
 
@@ -264,15 +286,17 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
     var latSum = 0.0
     var lonSum = 0.0
     for (location in locations) {
-      val locationParts = location.split(",")
-      val lat = locationParts[0].toDouble()
-      val lon = locationParts[1].toDouble()
-      val title = if (locationParts.size > 2) locationParts[2] else ""
-      val url = if (locationParts.size > 3) locationParts[3] else ""
+      val locationParts = location.split("|")
+      val lat = locationParts[0].trim().toDouble()
+      val lon = locationParts[1].trim().toDouble()
+      val title = if (locationParts.size > 2) locationParts[2].trim() else ""
+      val kind = if (locationParts.size > 3) LocationKind.getByName(locationParts[3].trim()) else LocationKind.POI
+      val url = if (locationParts.size > 4) locationParts[4].trim() else ""
       mapArea.locationData.add(
         LocationData(
           LatLng(lat, lon),
           title,
+          kind,
           url,
           FloatArray(16),
           FloatArray(16),
@@ -451,28 +475,17 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
 
     // Get the current pose of the Anchor in world space. The Anchor pose is updated
     // during calls to session.update() as ARCore refines its estimate of the world.
-    anchor.pose.toMatrix(mapAreas[areaIndex].locationData[index].modelMatrix, 0)
+    val locData = mapAreas[areaIndex].locationData[index]
+    anchor.pose.toMatrix(locData.modelMatrix, 0)
 
     // Calculate model/view/projection matrices
-    Matrix.multiplyMM(
-      mapAreas[areaIndex].locationData[index].modelViewMatrix,
-      0,
-      viewMatrix,
-      0,
-      mapAreas[areaIndex].locationData[index].modelMatrix,
-      0
-    )
-    Matrix.multiplyMM(
-      mapAreas[areaIndex].locationData[index].modelViewProjectionMatrix,
-      0,
-      projectionMatrix,
-      0,
-      mapAreas[areaIndex].locationData[index].modelViewMatrix,
-      0
-    )
+    Matrix.multiplyMM(locData.modelViewMatrix, 0, viewMatrix, 0, locData.modelMatrix, 0)
+    Matrix.multiplyMM(locData.modelViewProjectionMatrix, 0, projectionMatrix, 0, locData.modelViewMatrix, 0)
 
     // Update shader properties and draw
-    virtualObjectShader.setMat4("u_ModelViewProjection", mapAreas[areaIndex].locationData[index].modelViewProjectionMatrix)
+    val virtualObjectShader = if (locData.kind == LocationKind.TRASHCAN) greenObjectShader else redObjectShader
+    virtualObjectShader.setMat4("u_ModelViewProjection", locData.modelViewProjectionMatrix)
+    val virtualObjectMesh = if (locData.kind == LocationKind.TRASHCAN) downArrowMesh else mapPinMesh
     draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer)
   }
 

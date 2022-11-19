@@ -49,8 +49,8 @@ import okhttp3.OkHttpClient
 class TrashcanGeoActivity : AppCompatActivity() {
   companion object {
     private const val TAG = "TrashcanGeoActivity"
-    private const val LOCATIONS_FILE_NAME = "locations2.xml"
-    private const val LOCATIONS_URL = "https://recyclingtrashcans.github.io/locations.xml"
+    private const val LOCATIONS_FILE_NAME = "locations_v2_2.xml"
+    private const val LOCATIONS_URL = "https://recyclingtrashcans.github.io/locations_v2.xml"
   }
 
   lateinit var arCoreSessionHelper: ARCoreSessionLifecycleHelper

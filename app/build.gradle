@@ -10,8 +10,8 @@ android {
         // AR Required apps must declare minSdkVersion >= 24.
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 6
-        versionName '1.6'
+        versionCode 7
+        versionName '1.7'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

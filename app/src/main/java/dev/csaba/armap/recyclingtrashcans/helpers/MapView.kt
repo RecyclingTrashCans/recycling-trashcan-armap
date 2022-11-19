@@ -63,7 +63,7 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
       isIndoorLevelPickerEnabled = false
       isZoomControlsEnabled = false
       isTiltGesturesEnabled = false
-      isScrollGesturesEnabled = false
+      isScrollGesturesEnabled = true
     }
 
     googleMap.setOnMarkerClickListener { false }
