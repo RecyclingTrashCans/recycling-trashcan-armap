@@ -446,13 +446,13 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
 
       if (shouldAddMarker) {
         mapView?.earthMarkers?.add(mapView.createMarker(
-          mapView.greenMarkerColor,
+          if (location.kind == LocationKind.TRASHCAN) mapView.greenMarkerColor else mapView.redMarkerColor,
           location.gpsLocation.latitude,
           location.gpsLocation.longitude,
           location.title,
           location.url,
           true,
-          R.drawable.ic_marker_white_48dp,
+          if (location.kind == LocationKind.TRASHCAN) R.drawable.ic_recycle_white_48dp else R.drawable.ic_map_pin_white_48dp,
         ))
       }
     }

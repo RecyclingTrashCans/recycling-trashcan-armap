@@ -41,11 +41,11 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
     const val TAG = "MapView"
   }
 
-  private val cameraMarkerColor: Int = Color.argb(255, 255, 0, 0)
+  val redMarkerColor: Int = Color.argb(255, 255, 0, 0)
   val greenMarkerColor: Int = Color.argb(255, 39, 213, 7)
 
   private var setInitialCameraPosition = false
-  private val cameraMarker = createMarker(cameraMarkerColor, title = "You")
+  private val cameraMarker = createMarker(redMarkerColor, title = "You")
   private var cameraIdle = true
 
   var earthMarkers: MutableList<Marker?> = emptyList<Marker?>().toMutableList()
@@ -161,7 +161,7 @@ class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMa
     title: String = "",
     url: String = "",
     visible: Boolean = false,
-    iconId: Int = R.drawable.ic_navigation_white_48dp,
+    iconId: Int = R.drawable.ic_arrow_white_48dp,
   ): Marker? {
     val markerOptions = MarkerOptions()
       .position(LatLng(lat, lon))
