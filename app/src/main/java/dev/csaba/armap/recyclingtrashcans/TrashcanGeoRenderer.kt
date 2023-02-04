@@ -62,8 +62,8 @@ data class LocationData(
 
     other as LocationData
 
-    if (!title.equals(other.title)) return false
-    if (!url.equals(other.url)) return false
+    if (title != other.title) return false
+    if (url != other.url) return false
     if (gpsLocation != other.gpsLocation) return false
     if (!modelMatrix.contentEquals(other.modelMatrix)) return false
     if (!modelViewMatrix.contentEquals(other.modelViewMatrix)) return false
@@ -91,7 +91,6 @@ data class MapArea(
 
 class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
   SampleRender.Renderer, DefaultLifecycleObserver {
-  //<editor-fold desc="ARCore initialization" defaultstate="collapsed">
   companion object {
     const val TAG = "TrashcanGeoRenderer"
 
@@ -181,7 +180,6 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
     displayRotationHelper.onSurfaceChanged(width, height)
     virtualSceneFramebuffer.resize(width, height)
   }
-  //</editor-fold>
 
   override fun onDrawFrame(render: SampleRender) {
     val session = session ?: return
@@ -203,7 +201,7 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
 
     // Obtain the current frame from ARSession. When the configuration is set to
     // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
-    // camera framerate.
+    // camera frame rate.
     val frame =
       try {
         session.update()
@@ -258,12 +256,12 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
         heading = cameraGeospatialPose.heading
       )
 
-      if (BuildConfig.BUILD_TYPE.equals("debug")) {
+      if (BuildConfig.BUILD_TYPE == "debug") {
         activity.view.updateStatusText(earth, cameraGeospatialPose)
       } else {
         activity.view.updateStatusTextString("")
       }
-    } else if (!BuildConfig.BUILD_TYPE.equals("debug")) {
+    } else if (BuildConfig.BUILD_TYPE != "debug") {
       activity.view.updateStatusTextString(activity.resources.getString(R.string.calculating))
     }
 
