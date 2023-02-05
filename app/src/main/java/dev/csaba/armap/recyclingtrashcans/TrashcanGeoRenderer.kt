@@ -341,7 +341,13 @@ class TrashcanGeoRenderer(val activity: TrashcanGeoActivity) :
 
   fun processLocations(locationsFile: File) {
     if (!locationsFile.exists()) {
-      Log.w(TAG, "Locations file ${locationsFile.path} doesn't exist")
+      Log.w(TAG, "Locations file ${locationsFile.path} doesn't exist, load from included resource files")
+      for (area in activity.resources.getStringArray(R.array.areas)) {
+        val areaLocations = activity.resources.getStringArray(
+          if (area == "csu_fresno") R.array.csu_fresno else R.array.park_ridge
+        ).toList()
+        processLocationArray(area, areaLocations.toTypedArray())
+      }
       loaded = true
       return
     }

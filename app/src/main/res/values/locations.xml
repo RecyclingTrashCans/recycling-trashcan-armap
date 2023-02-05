@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string-array name="areas">
+    <item>csu_fresno</item>
+    <item>park_ridge</item>
+  </string-array>
   <string-array name="csu_fresno">
     <item>36.813174|-119.7454102|Satellite Student Union South|trashcan|https://recyclingtrashcans.github.io//vrview/2020/08/08/ssu_south.html</item>
     <item>36.813985|-119.7453072|Satellite Student Union North 2|trashcan|https://recyclingtrashcans.github.io//vrview/2020/08/08/ssu_north2.html</item>
