@@ -15,11 +15,8 @@
  */
 package dev.csaba.armap.recyclingtrashcans.helpers
 
-import android.opengl.GLSurfaceView
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.ar.core.Earth
 import com.google.ar.core.GeospatialPose
@@ -28,21 +25,12 @@ import dev.csaba.armap.recyclingtrashcans.R
 import dev.csaba.armap.common.helpers.SnackbarHelper
 
 /** Contains UI elements for Trashcan Geo. */
-class TrashcanGeoView(val activity: TrashcanGeoActivity) : DefaultLifecycleObserver {
+class TrashcanGeoView(val activity: TrashcanGeoActivity) {
   val root: View = View.inflate(activity, R.layout.activity_main, null)
-  val surfaceView: GLSurfaceView = root.findViewById(R.id.surfaceview)
-
-  val session
-    get() = activity.arCoreSessionHelper.session
 
   val snackbarHelper = SnackbarHelper()
 
   var mapView: MapView? = null
-//  val mapTouchWrapper: MapTouchWrapper = root.findViewById<MapTouchWrapper>(R.id.map_wrapper).apply {
-//    setup {
-//      activity.renderer.onMapClick()
-//    }
-//  }
   val mapFragment =
     (activity.supportFragmentManager.findFragmentById(R.id.map)!! as SupportMapFragment).also {
       it.getMapAsync { googleMap -> mapView = MapView(activity, googleMap) }
@@ -77,13 +65,5 @@ class TrashcanGeoView(val activity: TrashcanGeoActivity) : DefaultLifecycleObser
         statusText.text = statusMessage
       }
     }
-  }
-
-  override fun onResume(owner: LifecycleOwner) {
-    surfaceView.onResume()
-  }
-
-  override fun onPause(owner: LifecycleOwner) {
-    surfaceView.onPause()
   }
 }

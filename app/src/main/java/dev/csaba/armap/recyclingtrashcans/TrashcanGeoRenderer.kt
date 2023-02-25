@@ -24,13 +24,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.ar.core.Anchor
 import com.google.ar.core.TrackingState
 import com.google.ar.core.exceptions.CameraNotAvailableException
-import dev.csaba.armap.common.helpers.DisplayRotationHelper
-import dev.csaba.armap.common.helpers.TrackingStateHelper
-import dev.csaba.armap.common.samplerender.Framebuffer
-import dev.csaba.armap.common.samplerender.Mesh
-import dev.csaba.armap.common.samplerender.SampleRender
-import dev.csaba.armap.common.samplerender.Shader
-import dev.csaba.armap.common.samplerender.arcore.BackgroundRenderer
 import java.io.File
 import java.io.FileReader
 import java.io.IOException

@@ -21,11 +21,5 @@
   <string name="calculating">Calculating…</string>
   <string name="info_snippet">Click for 360 media</string>
   <string name="too_far">Cannot find close enough\npins to display,\ntry again later</string>
-  <string name="permissions_needed">Camera and location permissions are needed to run this application</string>
-  <string name="install_google_play">Please install Google Play Services for AR</string>
-  <string name="update_ar_core">Please update ARCore</string>
-  <string name="update_this_app">Please update this app</string>
-  <string name="no_ar_support">This device does not support AR</string>
-  <string name="camera_not_available">Camera not available. Try restarting the app.</string>
   <string name="ar_core_exception">Failed to create AR session: %1$s</string>
 </resources>

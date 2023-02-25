@@ -38,12 +38,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 import dev.csaba.armap.recyclingtrashcans.TrashcanGeoActivity
 import dev.csaba.armap.recyclingtrashcans.R
 
-class MapView(val activity: TrashcanGeoActivity, private val googleMap: GoogleMap): OnInfoWindowClickListener {
+class MapView(private val activity: TrashcanGeoActivity, private val googleMap: GoogleMap): OnInfoWindowClickListener {
   companion object {
     const val TAG = "MapView"
   }
 
-  val redMarkerColor: Int = Color.argb(255, 255, 0, 0)
+  private val redMarkerColor: Int = Color.argb(255, 255, 0, 0)
   val greenMarkerColor: Int = Color.argb(255, 39, 213, 7)
 
   private var setInitialCameraPosition = false
