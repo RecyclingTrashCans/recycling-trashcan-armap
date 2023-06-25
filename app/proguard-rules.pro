@@ -9,5 +9,10 @@
 
 # Add any project specific keep options here:
 -keep class com.google.android.gms.location.** { *; }
+-keepclassmembernames class com.google.android.gms.location.* { *; }
 -keep class com.google.android.gms.common.** { *; }
+-keepclassmembernames class com.google.android.gms.common.* { *; }
 -keep class com.google.android.gms.tasks.** { *; }
+-keepclassmembernames class com.google.android.gms.tasks.* { *; }
+-keep class com.google.ar.core.** { *; }
+-keepclassmembernames class com.google.ar.core.* { *; }
